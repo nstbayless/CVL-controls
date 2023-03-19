@@ -9,10 +9,9 @@ then
     exit 1
 fi
 
-if ! [ -f base-us.gb ] #&& ! [ -f base-jp.gb ]
+if ! [ -f base-us.gb ] && ! [ -f base-jp.gb ]
 then
-    #echo "at least one of the following ROMS is required: base-us.gb, base-jp.gb"
-    echo "please provide base-us.gb"
+    echo "at least one of the following ROMS is required: base-us.gb, base-jp.gb"
     exit 1
 fi
 
@@ -49,6 +48,7 @@ function build() {
     
     echo "incbin 'base-$BASEROM.gb'" > cfg.asm
     echo "rom_us: equ 10" >> cfg.asm
+    echo "rom_jp: equ 11" >> cfg.asm
     echo "rom_type: equ rom_$BASEROM" >> cfg.asm
     
     while [ $# -gt 0 ]
@@ -74,9 +74,13 @@ function simplemd5() {
     md5sum "$1" | cut -d ' ' -f 1
 }
 
-build patch us cvleg-no-aircontrol no-aircontrol "NO_CONTROL: equ 1"
+build patch us cvleg-no-aircontrol no-aircontrol "NO_CONTROL: equ 1" "NO_VCANCEL: equ 0"
+build patch us cvleg-no-aircontrol no-aircontrol-no-vcancel "NO_CONTROL: equ 1" "NO_VCANCEL: equ 1"
 
-#cp README-no-controls.txt "$DST/cvleg-no-aircontrol"
+build patch jp cvleg-no-aircontrol no-aircontrol "NO_CONTROL: equ 1" "NO_VCANCEL: equ 0"
+build patch jp cvleg-no-aircontrol no-aircontrol-no-vcancel "NO_CONTROL: equ 1" "NO_VCANCEL: equ 1"
+
+cp README.txt "$DST/cvleg-no-aircontrol/README.txt"
 
 if [ -f "cvleg-no-aircontrol.zip" ]
 then
