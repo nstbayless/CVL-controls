@@ -1,0 +1,6 @@
+*.gb
+*.sn*
+*.lbl
+*.ips
+*.zip
+build/
